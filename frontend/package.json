@@ -1,0 +1,21 @@
+{
+  "name": "palabras-frontend",
+  "version": "1.0.0",
+  "description": "Frontend para gestión de palabras - TP04",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "echo 'Build frontend completed - static files ready'",
+    "test": "echo 'No tests specified for frontend'"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["frontend", "express", "static", "tp04"],
+  "author": "Tu Nombre",
+  "license": "MIT"
+}
