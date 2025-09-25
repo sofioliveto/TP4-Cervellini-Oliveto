@@ -1,0 +1,63 @@
+# TP04 - Azure DevOps Pipeline CI - Aplicación de Palabras (Frontend + Backend)
+# Ejecuta en un agente Self-Hosted, construye ambos módulos y publica artefactos
+
+trigger:
+  - main
+
+pool:
+  name: 'PalabrasPOOL'
+  demands:
+    - agent.name -equals PalabrasAGENT
+
+stages:
+  - stage: CI
+    displayName: 'Continuous Integration'
+    jobs:
+      - job: BuildApp
+        displayName: 'Build Frontend + Backend'
+        steps:
+
+          #Instalar Node.js
+          - task: NodeTool@0
+            displayName: 'Install Node.js 18.x'
+            inputs:
+              versionSpec: '18.x'
+
+          #======== Build del Frontend ========
+          - script: |
+              echo "=== BUILDING FRONTEND ==="
+              dir frontend
+              cd frontend
+              npm install
+              echo "Frontend dependencies installed"
+              npm run build
+              echo "Frontend build completed"
+            displayName: 'Frontend Build'
+
+          #======== Build del Backend ========
+          - script: |
+              echo "=== BUILDING BACKEND ==="
+              dir backend
+              cd backend
+              npm install
+              echo "Backend dependencies installed"
+              npm run build
+              echo "Backend build completed"
+            displayName: 'Backend Build'
+
+          #Copiar archivos (excepto node_modules)
+          - task: CopyFiles@2
+            displayName: 'Copy Frontend + Backend files (excluding node_modules)'
+            inputs:
+              Contents: |
+                frontend/**
+                backend/**
+                !**/node_modules/**
+              TargetFolder: '$(Build.ArtifactStagingDirectory)'
+
+          #======== Publicar artefactos ========
+          - task: PublishBuildArtifacts@1
+            displayName: 'Publish Combined App Artifacts'
+            inputs:
+              PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+              ArtifactName: 'app-complete'
